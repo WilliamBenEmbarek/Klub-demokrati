@@ -1,0 +1,10 @@
+.songText{
+    font-size: 0.8em;
+    font-weight: Light;
+    color: rgb(255, 255, 255);
+    text-shadow: 0 0 1px #000;
+}
+.songText:hover{
+    color: rgb(251, 26, 26);
+    text-shadow: 0 0 1px #000;
+}
