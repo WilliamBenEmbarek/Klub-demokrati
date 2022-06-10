@@ -1,8 +1,37 @@
 import SongCover from './SongCover.js'
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState}from 'react';
 import './ClubDemokrati.css';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
+
+
 
 function ClubDemokrati() {
+    //WebSocketCrap
+    const [socketUrl, setSocketUrl] = useState('ws://localhost:8080/echo');
+    const [messageHistory, setMessageHistory] = useState([]);
+
+    const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
+
+    //When we first load the clubdemokrati component connect to websocket
+    //Everytime we recieve a message we can then update the status here
+    useEffect(() => {
+        if (lastMessage !== null) {
+            setMessageHistory((prev) => prev.concat(lastMessage));
+        }
+      }, [lastMessage, setMessageHistory]
+    );
+
+    const handleClickSendMessage = useCallback((id) => sendMessage('I voted for: ' + id), []);
+
+    const connectionStatus = {
+        [ReadyState.CONNECTING]: 'Connecting',
+        [ReadyState.OPEN]: 'Open',
+        [ReadyState.CLOSING]: 'Closing',
+        [ReadyState.CLOSED]: 'Closed',
+        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    }[readyState];
+
+    //Game Logic
     const [voted, setVoted] = useState(false);
     const [nowPlaying, setNowPlaying] = useState({
         id: 0,
@@ -44,7 +73,7 @@ function ClubDemokrati() {
 
     const vote = (id) => {
         if(!voted) {
-            setVoted(false);
+            setVoted(true);
             const newSongs = [...songs];
             newSongs.forEach(song => {
                 if (song.id === id) {
@@ -52,16 +81,19 @@ function ClubDemokrati() {
                 }
             })
             setSongs(newSongs);
+            handleClickSendMessage(id);
         }
     }
 
     return (
         <div className="ClubDemokrati">
+            <span>The WebSocket is currently {connectionStatus}</span>
+            {lastMessage ? <span>DEBUG : Last message: {lastMessage.data}</span> : null}
             <h1>Now Playing</h1>
             <SongCover songName={nowPlaying.name} artist={nowPlaying.artist} votes={nowPlaying.votes} image={nowPlaying.image}/>
             <div className="SongGrid">
                 {songs.map((song) =>
-                    <SongCover key={song.id} songId={song.id} songName={song.name} artist={song.artist} votes={song.votes} image={song.image} onVote={vote} />
+                    <SongCover key={song.id} songId={song.id} songName={song.name} artist={song.artist} votes={song.votes} image={song.image} onVote={vote} disabled={readyState !== ReadyState.OPEN} />
                 )}
             </div>
         </div>
