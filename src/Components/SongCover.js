@@ -8,8 +8,8 @@ class SongCover extends React.Component {
 
     render() {
         return(
-                <div className="SongCover" onClick={() => this.handleClick()}>
-                    <img src={this.props.image}/>
+                // eslint-disable-next-line
+                <div className="SongCover" onClick={() => this.handleClick()}><img src={this.props.image}/>
                     <div className='songText'>{this.props.songName} - {this.props.artist}: Votes {this.props.votes}</div>
                 </div>
         );
