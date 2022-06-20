@@ -52,9 +52,11 @@ class ConnectionManager:
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
 
+    # Modify below function to vote
     async def send_personal_message(self, message: str, websocket: WebSocket):
         await websocket.send_text(message)
 
+    # Modify below function to broadcast winning track (to show information on user devices)
     async def broadcast(self, message: str):
         for connection in self.active_connections:
             await connection.send_text(message)
