@@ -4,12 +4,11 @@
     color: rgb(255, 255, 255);
     text-shadow: 0 0 1px #000;
 }
-.songText:hover{
-    color: rgb(251, 26, 26);
-    text-shadow: 0 0 1px #000;
+.SongCover{
+    height: 25vh;
 }
-.AlbumArt{
-    max-width: 35vw;
+.NowPlayingArt{
+    max-width: 50vw;
     max-height: 20vh;
     margin: auto;
     border-radius: 25px;

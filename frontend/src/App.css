@@ -1,6 +1,7 @@
 .App {
   text-align: center;
   height: 100vh;
+  width: 100vw;
 }
 
 .App-header {
@@ -13,3 +14,8 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+
+@viewport {
+  width: device-width ;
+  zoom: 1.0 ;
+} 
