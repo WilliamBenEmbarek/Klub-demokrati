@@ -22,4 +22,10 @@ auts
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# backend
+/__pycache__
+
+# spotdl
+.mp3
+.spotdl-cache
 node_modules
