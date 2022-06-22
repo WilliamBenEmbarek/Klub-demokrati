@@ -1,5 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
+import os
+import eyed3
 
 app = FastAPI()
 
@@ -40,7 +42,6 @@ html = """
 </html>
 """
 
-
 class ConnectionManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
@@ -63,6 +64,44 @@ class ConnectionManager:
 
 
 manager = ConnectionManager()
+admins = []
+players = []
+songs = []
+
+directory = "../assets"
+
+class Song:
+    def __init__(self, id, song_name, artist_name, votes):
+        self.id = id
+        self.song_name = song_name
+        self.artist_name = artist_name
+        self.votes = votes  
+
+def load_songs(songs):
+    i = 0
+    for filename in os.listdir(directory):
+        f = os.path.join(directory, filename)
+        if f.endswith(".mp3"):
+            audio = eyed3.load(f)
+            song_name = audio.tag.title
+            song_artist = audio.tag.artist
+            song_image = audio.tag.images[0]
+            image_descriptor = open(os.path.join(directory,filename+".jpg"), "wb")
+            image_descriptor.write(song_image.image_data)
+            image_descriptor.close()        
+            songs.append(Song(i, song_name,song_artist,0))
+            i = i + 1
+
+load_songs(songs)
+
+def vote(id):
+    #TODO
+    print(f"voted for song {id}")
+
+def choose_new_songs():
+    #TODO
+    print("chose 4 new songs yeeters")
+
 
 
 @app.get("/")
@@ -75,8 +114,25 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
     try:
         while True:
             data = await websocket.receive_text()
+            # Game Logic Time!
+            message_handler(data)
             await manager.send_personal_message(f"You wrote: {data}", websocket)
             await manager.broadcast(f"Client #{client_id} says: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast(f"Client #{client_id} left the chat")
+
+@app.websocket("/ws/admin/{client_id}")
+
+
+def message_handler(data):
+    game_data = data.split(":")
+    match game_data[0]:
+        case "adminJoin":
+            print(f"an admin joined the game with id {game_data[1]}")
+            admins.append(game_data[1])
+        case "playerJoin":
+            print(f"A player with id {game_data[1]} joined the game")
+            players.append(game_data[1])
+        case "playerVote":
+            print(f"player with id {game_data[1]} voted for song {game_data[2]}")
