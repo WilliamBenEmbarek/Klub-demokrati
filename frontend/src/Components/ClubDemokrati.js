@@ -2,6 +2,7 @@ import SongCover from './SongCover.js'
 import React, { useCallback, useEffect, useState } from 'react';
 import './ClubDemokrati.css';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import NowPlaying from './NowPlaying.js';
 
 function ClubDemokrati() {
     // WebSocketCrap
@@ -89,7 +90,7 @@ function ClubDemokrati() {
             <span>The WebSocket is currently {connectionStatus}</span>
             {lastMessage ? <span>DEBUG : Last message: {lastMessage.data}</span> : null}
             <h1>Now Playing</h1>
-            <SongCover songName={nowPlaying.name} artist={nowPlaying.artist} votes={nowPlaying.votes} image={nowPlaying.image} />
+            <NowPlaying songName={nowPlaying.name} artist={nowPlaying.artist} votes={nowPlaying.votes} image={nowPlaying.image}/>
             <div className="SongGrid">
                 {songs.map((song) =>
                     <SongCover key={song.id} songId={song.id} songName={song.name} artist={song.artist} votes={song.votes} image={song.image} onVote={vote} disabled={readyState !== ReadyState.OPEN} />

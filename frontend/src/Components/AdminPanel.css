@@ -1,11 +1,14 @@
-.SongGrid {
+.ControlPanelButtons {
     margin: 20px auto;
     align-items: center;
     width: fit-content;
     height: fit-content;
     display:grid;
-    grid-template-columns: 50vw 50vw;
+    grid-template-columns: 45vw 45vw;
     grid-row: auto auto;
     grid-column-gap: 1vh;
     grid-row-gap: 1vw;
-  }
+}
+button{
+    height: 100px;
+}
