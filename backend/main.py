@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 import os
 import eyed3
+import random
 
 app = FastAPI()
 
@@ -89,7 +90,7 @@ def load_songs(songs):
             image_descriptor = open(os.path.join(directory,filename+".jpg"), "wb")
             image_descriptor.write(song_image.image_data)
             image_descriptor.close()        
-            songs.append(Song(i, song_name,song_artist,0))
+            songs.append(Song(i, song_name, song_artist, 0))
             i = i + 1
 
 load_songs(songs)
@@ -98,10 +99,11 @@ def vote(id):
     #TODO
     print(f"voted for song {id}")
 
-def choose_new_songs():
-    #TODO
-    print("chose 4 new songs yeeters")
-
+def choose_new_songs(songs):
+    songs_in_round = random.sample(songs, k)
+    print(f"Chose songs {*songs_in_round.title,}")
+    songs = [song for song in songs if song not in songs_in_round]
+    return songs_in_round
 
 
 @app.get("/")
@@ -123,8 +125,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
         await manager.broadcast(f"Client #{client_id} left the chat")
 
 @app.websocket("/ws/admin/{client_id}")
-
-
 def message_handler(data):
     game_data = data.split(":")
     match game_data[0]:
@@ -136,3 +136,4 @@ def message_handler(data):
             players.append(game_data[1])
         case "playerVote":
             print(f"player with id {game_data[1]} voted for song {game_data[2]}")
+
